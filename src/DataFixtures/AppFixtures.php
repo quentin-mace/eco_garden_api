@@ -7,9 +7,15 @@ use App\Entity\User;
 use App\Enum\MonthEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    public function __construct(
+        private UserPasswordHasherInterface $hasher
+    ){
+    }
+
     public function load(ObjectManager $manager): void
     {
         // Users
@@ -17,14 +23,14 @@ class AppFixtures extends Fixture
         $user = $this->userMaker([
             'email' => 'user@ecogarden.com',
             'password' => 'password',
-            'zip_code' => 59400,
+            'zip_code' => '59400',
         ]);
         $manager->persist($user);
 
         $admin = $this->userMaker([
             'email' => 'admin@ecogarden.com',
             'password' => 'password',
-            'zip_code' => 25220,
+            'zip_code' => '25220',
             'roles' => ['ROLE_ADMIN'],
         ]);
         $manager->persist($admin);
@@ -122,7 +128,8 @@ class AppFixtures extends Fixture
     {
         $user = new User();
         $user->setEmail($params['email']);
-        $user->setPassword($params['password']);
+        $hashedPassword = $this->hasher->hashPassword($user, $params['password']);
+        $user->setPassword($hashedPassword);
         $user->setZipCode($params['zip_code']);
         if (isset($params['roles'])) {
             $user->setRoles($params['roles']);
