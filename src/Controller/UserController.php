@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,6 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/user', name: 'app_user')]
 final class UserController extends AbstractController
@@ -24,12 +26,23 @@ final class UserController extends AbstractController
         Request $request,
         SerializerInterface $serializer,
         EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $hasher
+        UserPasswordHasherInterface $hasher,
+        ValidatorInterface $validator
     ): JsonResponse {
         $user = $serializer->deserialize($request->getContent(), User::class, 'json', ['groups' => 'user:write']);
         $content = $request->toArray();
         $hashedPassword = $hasher->hashPassword($user, $content['password']);
         $user->setPassword($hashedPassword);
+        $errors = $validator->validate($user);
+        if (count($errors) > 0) {
+            $messages = [];
+            foreach ($errors as $error) {
+                $messages[] = $error->getMessage();
+            }
+            $jsonError = $serializer->serialize($messages, 'json');
+
+            return new JsonResponse($jsonError, Response::HTTP_BAD_REQUEST, [], true);
+        }
         $entityManager->persist($user);
         $entityManager->flush();
 

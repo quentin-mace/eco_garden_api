@@ -4,13 +4,16 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity('email', message: 'This email is already used.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -20,6 +23,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Groups(['user:write'])]
+    #[Assert\NotBlank(message: 'Email should not be blank.')]
+    #[Assert\Email(message: 'The email {{ value }} is not a valid email.')]
     private ?string $email = null;
 
     /**
@@ -33,11 +38,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     #[Groups(['user:write'])]
+    #[Assert\NotBlank(message: 'Password should not be blank.')]
     private ?string $password = null;
 
     #[ORM\Column]
     #[Groups(['user:write'])]
-    private ?int $zip_code = null;
+    #[Assert\NotBlank(message: 'Zip code should not be blank.')]
+    #[Assert\Regex(pattern: '/^\d{5}$/', message: 'The zip code {{ value }} is not valid.')]
+    private ?string $zip_code = null;
 
     public function getId(): ?int
     {
@@ -120,12 +128,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // @deprecated, to be removed when upgrading to Symfony 8
     }
 
-    public function getZipCode(): ?int
+    public function getZipCode(): ?string
     {
         return $this->zip_code;
     }
 
-    public function setZipCode(int $zip_code): static
+    public function setZipCode(string $zip_code): static
     {
         $this->zip_code = $zip_code;
 

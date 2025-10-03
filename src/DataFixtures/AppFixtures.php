@@ -23,14 +23,14 @@ class AppFixtures extends Fixture
         $user = $this->userMaker([
             'email' => 'user@ecogarden.com',
             'password' => 'password',
-            'zip_code' => 59400,
+            'zip_code' => '59400',
         ]);
         $manager->persist($user);
 
         $admin = $this->userMaker([
             'email' => 'admin@ecogarden.com',
             'password' => 'password',
-            'zip_code' => 25220,
+            'zip_code' => '25220',
             'roles' => ['ROLE_ADMIN'],
         ]);
         $manager->persist($admin);
