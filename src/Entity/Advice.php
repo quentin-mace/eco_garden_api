@@ -18,7 +18,7 @@ class Advice
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: Types::SIMPLE_ARRAY)]
     private array $months = [];
 
     public function getId(): ?int
