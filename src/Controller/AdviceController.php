@@ -2,14 +2,20 @@
 
 namespace App\Controller;
 
+use App\Entity\Advice;
 use App\Repository\AdviceRepository;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/advice', name: 'app_advice')]
 final class AdviceController extends AbstractController
@@ -43,5 +49,36 @@ final class AdviceController extends AbstractController
         $advices = $serializer->serialize($advices, 'json');
 
         return new JsonResponse($advices, Response::HTTP_OK, [], true);
+    }
+
+    /**
+     * @throws ExceptionInterface
+     */
+    #[Route('', name: '_create', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function createAdvice(
+        Request $request,
+        SerializerInterface $serializer,
+        EntityManagerInterface $entityManager,
+        UrlGeneratorInterface $urlGenerator,
+        ValidatorInterface $validator
+    ): JsonResponse {
+        $advice = $serializer->deserialize($request->getContent(), Advice::class, 'json');
+        $errors = $validator->validate($advice);
+        if (count($errors) > 0) {
+            $messages = [];
+            foreach ($errors as $error) {
+                $messages[] = $error->getMessage();
+            }
+            $jsonError = $serializer->serialize($messages, 'json');
+
+            return new JsonResponse($jsonError, Response::HTTP_BAD_REQUEST, [], true);
+        }
+        $entityManager->persist($advice);
+        $entityManager->flush();
+
+        $jsonAdvice = $serializer->serialize($advice, 'json');
+
+        return new JsonResponse($jsonAdvice, Response::HTTP_CREATED, [], true);
     }
 }
