@@ -39,85 +39,85 @@ class AppFixtures extends Fixture
 
         $advice1 = $this->adviceMaker([
             'content' => 'In January, it\'s a good time to plan your garden for the upcoming year. Consider what vegetables and flowers you want to plant and order seeds early.',
-            'months' => [MonthEnum::JANUARY],
+            'months' => [MonthEnum::JANUARY->value],
         ]);
         $manager->persist($advice1);
 
         $advice2 = $this->adviceMaker([
             'content' => 'February is the perfect month to start sowing seeds indoors for vegetables like tomatoes, peppers, and eggplants. Make sure to provide adequate light and warmth for germination.',
-            'months' => [MonthEnum::FEBRUARY],
+            'months' => [MonthEnum::FEBRUARY->value],
         ]);
         $manager->persist($advice2);
 
         $advice3 = $this->adviceMaker([
             'content' => 'March is the time to prepare your garden beds. Clear out any debris from winter, add compost or organic matter to enrich the soil, and start planting cool-season crops like lettuce, spinach, and peas.',
-            'months' => [MonthEnum::MARCH],
+            'months' => [MonthEnum::MARCH->value],
         ]);
         $manager->persist($advice3);
 
         $advice4 = $this->adviceMaker([
             'content' => 'In April, you can start planting hardy vegetables like carrots, radishes, and broccoli directly in the garden. It\'s also a good time to plant fruit trees and berry bushes.',
-            'months' => [MonthEnum::APRIL],
+            'months' => [MonthEnum::APRIL->value],
         ]);
         $manager->persist($advice4);
 
         $advice5 = $this->adviceMaker([
             'content' => 'May is the month to plant warm-season crops like tomatoes, cucumbers, and beans. Make sure to harden off seedlings before transplanting them outdoors to prevent shock.',
-            'months' => [MonthEnum::MAY],
+            'months' => [MonthEnum::MAY->value],
         ]);
         $manager->persist($advice5);
 
         $advice6 = $this->adviceMaker([
             'content' => 'In June, focus on maintaining your garden by watering regularly, mulching to retain moisture, and keeping an eye out for pests and diseases. It\'s also a great time to start harvesting early crops like lettuce and radishes.',
-            'months' => [MonthEnum::JUNE],
+            'months' => [MonthEnum::JUNE->value],
         ]);
         $manager->persist($advice6);
 
         $advice7 = $this->adviceMaker([
             'content' => 'July is the peak of summer, so make sure to water your garden deeply and consistently. Harvest crops like beans, cucumbers, and zucchini regularly to encourage continued production.',
-            'months' => [MonthEnum::JULY],
+            'months' => [MonthEnum::JULY->value],
         ]);
         $manager->persist($advice7);
 
         $advice8 = $this->adviceMaker([
             'content' => 'In August, continue to harvest your crops and consider planting a second round of fast-growing vegetables like lettuce and radishes for a fall harvest. Keep an eye on watering needs as temperatures remain high.',
-            'months' => [MonthEnum::AUGUST],
+            'months' => [MonthEnum::AUGUST->value],
         ]);
         $manager->persist($advice8);
 
         $advice9 = $this->adviceMaker([
             'content' => 'September is the time to start preparing your garden for fall. Plant cool-season crops like kale, Brussels sprouts, and carrots. It\'s also a good time to start cleaning up spent plants and adding compost to the soil.',
-            'months' => [MonthEnum::SEPTEMBER],
+            'months' => [MonthEnum::SEPTEMBER->value],
         ]);
         $manager->persist($advice9);
 
         $advice10 = $this->adviceMaker([
             'content' => 'In October, focus on harvesting the last of your summer crops and planting garlic for a summer harvest next year. It\'s also a good time to mulch garden beds to protect them over the winter.',
-            'months' => [MonthEnum::OCTOBER],
+            'months' => [MonthEnum::OCTOBER->value],
         ]);
         $manager->persist($advice10);
 
         $advice11 = $this->adviceMaker([
             'content' => 'November is the month to finish cleaning up your garden. Remove any remaining plant debris to prevent pests and diseases from overwintering. Consider planting cover crops to improve soil health.',
-            'months' => [MonthEnum::NOVEMBER],
+            'months' => [MonthEnum::NOVEMBER->value],
         ]);
         $manager->persist($advice11);
 
         $advice12 = $this->adviceMaker([
             'content' => 'In December, take time to reflect on the past gardening season and plan for the next year. Order seeds, research new gardening techniques, and consider any changes you want to make to your garden layout.',
-            'months' => [MonthEnum::DECEMBER],
+            'months' => [MonthEnum::DECEMBER->value],
         ]);
         $manager->persist($advice12);
 
         $advice13 = $this->adviceMaker([
             'content' => 'Spring is a great time to start a compost pile. Collect kitchen scraps like vegetable peels, coffee grounds, and eggshells, along with yard waste like grass clippings and leaves. Turn the pile regularly to speed up decomposition and create nutrient-rich compost for your garden.',
-            'months' => [MonthEnum::MARCH, MonthEnum::APRIL, MonthEnum::MAY],
+            'months' => [MonthEnum::MARCH->value, MonthEnum::APRIL->value, MonthEnum::MAY->value],
         ]);
         $manager->persist($advice13);
 
         $advice14 = $this->adviceMaker([
             'content' => 'Summer is the perfect time to practice crop rotation in your garden. By changing the location of your crops each year, you can prevent soil depletion and reduce the risk of pests and diseases. Plan your garden layout to ensure that no plant family is grown in the same spot for at least three years.',
-            'months' => [MonthEnum::JUNE, MonthEnum::JULY, MonthEnum::AUGUST],
+            'months' => [MonthEnum::JUNE->value, MonthEnum::JULY->value, MonthEnum::AUGUST->value],
         ]);
         $manager->persist($advice14);
 
