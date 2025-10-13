@@ -35,6 +35,10 @@ final class AdviceController extends AbstractController
     #[Route('/{month}', name: '_month', requirements: ['month' => '\d+'], methods: ['GET'])]
     public function getAdvicesForMonth(int $month, AdviceRepository $repository, SerializerInterface $serializer): JsonResponse
     {
+        if ($month < 1 || $month > 12) {
+            return new JsonResponse(['error' => 'Invalid month. Please provide a value between 1 and 12.'], Response::HTTP_BAD_REQUEST);
+        }
+
         $advices = $repository->findByMonth($month);
         $advices = $serializer->serialize($advices, 'json');
 
