@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -60,7 +61,6 @@ final class AdviceController extends AbstractController
         Request $request,
         SerializerInterface $serializer,
         EntityManagerInterface $entityManager,
-        UrlGeneratorInterface $urlGenerator,
         ValidatorInterface $validator
     ): JsonResponse {
         $advice = $serializer->deserialize($request->getContent(), Advice::class, 'json');
@@ -80,5 +80,36 @@ final class AdviceController extends AbstractController
         $jsonAdvice = $serializer->serialize($advice, 'json');
 
         return new JsonResponse($jsonAdvice, Response::HTTP_CREATED, [], true);
+    }
+
+    #[Route('/{id}', name: '_update', requirements: ['id' => '\d+'], methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function updateAdvice(
+        Advice                 $advice,
+        Request                $request,
+        SerializerInterface    $serializer,
+        EntityManagerInterface $entityManager,
+        ValidatorInterface     $validator
+    ): JsonResponse {
+        $updatedAdvice = $serializer->deserialize(
+            $request->getContent(),
+            Advice::class,
+            'json',
+            [AbstractNormalizer::OBJECT_TO_POPULATE => $advice ]
+        );
+        $errors = $validator->validate($updatedAdvice);
+        if (count($errors) > 0) {
+            $messages = [];
+            foreach ($errors as $error) {
+                $messages[] = $error->getMessage();
+            }
+            $jsonError = $serializer->serialize($messages, 'json');
+
+            return new JsonResponse($jsonError, Response::HTTP_BAD_REQUEST, [], true);
+        }
+        $entityManager->persist($updatedAdvice);
+        $entityManager->flush();
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT, []);
     }
 }
