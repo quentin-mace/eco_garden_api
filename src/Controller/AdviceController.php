@@ -85,11 +85,11 @@ final class AdviceController extends AbstractController
     #[Route('/{id}', name: '_update', requirements: ['id' => '\d+'], methods: ['PUT'])]
     #[IsGranted('ROLE_ADMIN')]
     public function updateAdvice(
-        Advice                 $advice,
-        Request                $request,
-        SerializerInterface    $serializer,
+        Advice $advice,
+        Request $request,
+        SerializerInterface $serializer,
         EntityManagerInterface $entityManager,
-        ValidatorInterface     $validator
+        ValidatorInterface $validator
     ): JsonResponse {
         $updatedAdvice = $serializer->deserialize(
             $request->getContent(),
