@@ -6,6 +6,7 @@ use App\Enum\MonthEnum;
 use App\Repository\AdviceRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AdviceRepository::class)]
 class Advice
@@ -16,9 +17,13 @@ class Advice
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank]
     private ?string $content = null;
 
     #[ORM\Column(type: Types::SIMPLE_ARRAY)]
+    #[Assert\All([
+        new Assert\Choice(choices: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"], message: '{{ value }} is not a valid month. Choose a valid month (between 01 and 12).')
+    ])]
     private array $months = [];
 
     public function getId(): ?int
