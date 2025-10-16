@@ -112,4 +112,16 @@ final class AdviceController extends AbstractController
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT, []);
     }
+
+    #[Route('/{id}', name: '_delete', requirements: ['id' => '\d+'], methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function deleteAdvice(
+        Advice $advice,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        $entityManager->remove($advice);
+        $entityManager->flush();
+
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT, []);
+    }
 }
