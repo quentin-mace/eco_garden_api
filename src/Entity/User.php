@@ -19,10 +19,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(['user:write'])]
+    #[Groups(['user:write', 'user:read'])]
     #[Assert\NotBlank(message: 'Email should not be blank.')]
     #[Assert\Email(message: 'The email {{ value }} is not a valid email.')]
     private ?string $email = null;
