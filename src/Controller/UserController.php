@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\JsonValidatorService;
 use Doctrine\DBAL\Exception\NotNullConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,7 +28,8 @@ final class UserController extends AbstractController
         SerializerInterface $serializer,
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $hasher,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        JsonValidatorService $jsonValidator
     ): JsonResponse {
         $user = $serializer->deserialize($request->getContent(), User::class, 'json', ['groups' => 'user:write']);
         $content = $request->toArray();
@@ -35,13 +37,7 @@ final class UserController extends AbstractController
         $user->setPassword($hashedPassword);
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
-            $messages = [];
-            foreach ($errors as $error) {
-                $messages[] = $error->getMessage();
-            }
-            $jsonError = $serializer->serialize($messages, 'json');
-
-            return new JsonResponse($jsonError, Response::HTTP_BAD_REQUEST, [], true);
+            return $jsonValidator->serializeErrorMessages($errors);
         }
         $entityManager->persist($user);
         $entityManager->flush();

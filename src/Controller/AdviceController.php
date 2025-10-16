@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Advice;
 use App\Repository\AdviceRepository;
+use App\Service\JsonValidatorService;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -61,18 +62,13 @@ final class AdviceController extends AbstractController
         Request $request,
         SerializerInterface $serializer,
         EntityManagerInterface $entityManager,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        JsonValidatorService $jsonValidator
     ): JsonResponse {
         $advice = $serializer->deserialize($request->getContent(), Advice::class, 'json');
         $errors = $validator->validate($advice);
         if (count($errors) > 0) {
-            $messages = [];
-            foreach ($errors as $error) {
-                $messages[] = $error->getMessage();
-            }
-            $jsonError = $serializer->serialize($messages, 'json');
-
-            return new JsonResponse($jsonError, Response::HTTP_BAD_REQUEST, [], true);
+            return $jsonValidator->serializeErrorMessages($errors);
         }
         $entityManager->persist($advice);
         $entityManager->flush();
@@ -89,7 +85,8 @@ final class AdviceController extends AbstractController
         Request $request,
         SerializerInterface $serializer,
         EntityManagerInterface $entityManager,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        JsonValidatorService $jsonValidator
     ): JsonResponse {
         $updatedAdvice = $serializer->deserialize(
             $request->getContent(),
@@ -99,13 +96,7 @@ final class AdviceController extends AbstractController
         );
         $errors = $validator->validate($updatedAdvice);
         if (count($errors) > 0) {
-            $messages = [];
-            foreach ($errors as $error) {
-                $messages[] = $error->getMessage();
-            }
-            $jsonError = $serializer->serialize($messages, 'json');
-
-            return new JsonResponse($jsonError, Response::HTTP_BAD_REQUEST, [], true);
+            return $jsonValidator->serializeErrorMessages($errors);
         }
         $entityManager->persist($updatedAdvice);
         $entityManager->flush();
