@@ -22,23 +22,26 @@ final class MeteoController extends AbstractController
     #[Route('/{zipCode}', name: 'app_meteo', methods: ['GET'])]
     public function getLocalMeteo(?string $zipCode, HttpClientInterface $client): JsonResponse
     {
-        $url = 'http://api.openweathermap.org/geo/1.0/zip';
+        $coordinates = $this->getCoordinatesFromZipCode($zipCode, $client);
+
+        $url = 'https://api.openweathermap.org/data/2.5/weather';
 
         $response = $client->request(
             'GET',
             $url,
             [
                 'query' => [
-                    'zip' => $zipCode.",FR",
+                    'lat' => $coordinates['lat'],
+                    'lon' => $coordinates['lon'],
                     'appid' => self::API_KEY,
-                ],
+                ]
             ]
         );
 
         return new JsonResponse($response->getContent(), $response->getStatusCode(), [], true);
     }
 
-    private function getCoordinatesFromZipCode(string $zipCode): array
+    private function getCoordinatesFromZipCode(string $zipCode, HttpClientInterface $client): array
     {
         $url = 'http://api.openweathermap.org/geo/1.0/zip';
 
