@@ -20,8 +20,13 @@ final class MeteoController extends AbstractController
      * @throws TransportExceptionInterface
      */
     #[Route('/{zipCode}', name: 'app_meteo', methods: ['GET'])]
+    #[Route('', name: 'app_meteo', methods: ['GET'])]
     public function getLocalMeteo(?string $zipCode, HttpClientInterface $client): JsonResponse
     {
+        if (!$zipCode) {
+            $zipCode = $this->getUser()->getZipCode();
+        }
+
         $coordinates = $this->getCoordinatesFromZipCode($zipCode, $client);
 
         $url = 'https://api.openweathermap.org/data/2.5/weather';
