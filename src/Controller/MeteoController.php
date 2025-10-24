@@ -21,7 +21,7 @@ final class MeteoController extends AbstractController
      * @throws TransportExceptionInterface
      */
     #[Route('/{zipCode}', name: 'app_meteo', methods: ['GET'])]
-    #[Route('', name: 'app_meteo', methods: ['GET'])]
+    #[Route('', name: 'app_meteo_current', methods: ['GET'])]
     public function getLocalMeteo(?string $zipCode, TagAwareCacheInterface $cache, MeteoRequestHandlerService $meteoHandler): JsonResponse
     {
         if (!$zipCode) {
