@@ -2,27 +2,31 @@
 
 namespace App\Service;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class MeteoRequestHandlerService
 {
-    const API_KEY = 'f0a6eff49a91e16ab8039fdd8e38a9d5';
     public function __construct(
         private HttpClientInterface $client,
+        #[Autowire(env: 'OW_KEY')]
+        private readonly string     $apiKey,
+        #[Autowire(env: 'OW_COORDINATES_URL')]
+        private readonly string     $coordinatesUrl,
+        #[Autowire(env: 'OW_WEATHER_URL')]
+        private readonly string     $weatherUrl,
     ){}
 
     public function getCoordinatesFromZipCode(string $zipCode): array
     {
-        $url = 'http://api.openweathermap.org/geo/1.0/zip';
-
         $response = $this->client->request(
             'GET',
-            $url,
+            $this->coordinatesUrl,
             [
                 'query' => [
                     'zip' => $zipCode.",FR",
-                    'appid' => self::API_KEY,
+                    'appid' => $this->apiKey,
                 ],
             ]
         );
@@ -36,16 +40,14 @@ class MeteoRequestHandlerService
 
     public function getMeteoFromCoordinates(array $coordinates): array
     {
-        $url = 'https://api.openweathermap.org/data/2.5/weather';
-
         $meteo = $this->client->request(
             'GET',
-            $url,
+            $this->weatherUrl,
             [
                 'query' => [
                     'lat' => $coordinates['lat'],
                     'lon' => $coordinates['lon'],
-                    'appid' => self::API_KEY,
+                    'appid' => $this->apiKey,
                 ]
             ]
         );
